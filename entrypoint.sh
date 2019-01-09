@@ -16,7 +16,7 @@ fi
 
 if [[ -z "${UUID}" ]]; then
   if [ "$AppName" = "no" ]; then 
-    UUID="4890bd47-5180-4b1c-9a5d-3ef686543112"
+    UUID="4890bd47-5180-4b1c-9a5d-3ef686543abc"
   else
     UUID="$(uuid)"
   fi
@@ -27,7 +27,7 @@ if [[ -z "${AlterID}" ]]; then
 fi
 
 if [[ -z "${V2_Path}" ]]; then
-  V2_Path="/shellscript"
+  V2_Path="${V2_Path}"
 fi
 
 if [[ -z "${V2_QR_Path}" ]]; then
