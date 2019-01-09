@@ -15,11 +15,7 @@ if [[ -z "${Level}" ]]; then
 fi
 
 if [[ -z "${UUID}" ]]; then
-  if [ "$AppName" = "no" ]; then 
-    UUID="4890bd47-5180-4b1c-9a5d-3ef686543abc"
-  else
     UUID="$(uuid)"
-  fi
 fi
 
 if [[ -z "${AlterID}" ]]; then
