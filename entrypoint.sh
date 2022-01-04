@@ -38,35 +38,22 @@ rm -f "/etc/localtime"
 cp "/usr/share/zoneinfo/Asia/Shanghai" "/etc/localtime"
 
 System_bit="$(getconf LONG_BIT)"
+V2ray_Git_Path="v2fly/v2ray-core"
 [[ "${System_bit}" == "32" ]] && dl_version="386"
 [[ "${System_bit}" == "64" ]] && dl_version="amd64"
 
 if [ "$VER" = "latest" ]; then
-  v2ray_version="$(wget -qO- "https://api.github.com/repos/v2ray/v2ray-core/releases/latest" | grep "tag_name" | cut -d\" -f4)"
+  v2ray_version="$(wget -qO- "https://api.github.com/repos/${V2ray_Git_Path}/releases/latest" | grep "tag_name" | cut -d\" -f4)"
 else
   v2ray_version="v$VER"
 fi
 
 mkdir "/v2raybin"
 cd "/v2raybin"
-wget -qO "v2ray.zip" "https://github.com/v2ray/v2ray-core/releases/download/${v2ray_version}/v2ray-linux-${System_bit}.zip"
+wget -qO "v2ray.zip" "https://github.com/${V2ray_Git_Path}/releases/download/${v2ray_version}/v2ray-linux-${System_bit}.zip"
 unzip "v2ray.zip"
 rm -f "v2ray.zip"
 chmod +x "/v2raybin/v2ray-${v2ray_version}-linux-${System_bit}/*"
-
-mkdir "/caddybin"
-cd "/caddybin"
-wget -qO "caddy.tar.gz" "https://caddyserver.com/download/linux/${dl_version}?plugins=http.forwardproxy&license=personal"
-tar xvf "caddy.tar.gz"
-rm -f "caddy.tar.gz"
-chmod +x "caddy"
-cd "/root"
-mkdir "/wwwroot"
-cd "/wwwroot"
-
-wget -qO "demo.tar.gz" "https://github.com/shell-script/v2ray-heroku/raw/master/demo.tar.gz"
-tar xvf "demo.tar.gz"
-rm -f "demo.tar.gz"
 
 cat <<-EOF > "/v2raybin/v2ray-${v2ray_version}-linux-${System_bit}/config.json"
 {
@@ -101,19 +88,6 @@ cat <<-EOF > "/v2raybin/v2ray-${v2ray_version}-linux-${System_bit}/config.json"
 }
 EOF
 
-cat <<-EOF > "/caddybin/Caddyfile"
-http://0.0.0.0:${PORT}
-{
-  root /wwwroot
-  index index.html index.txt
-  timeouts none
-  proxy ${V2_Path} localhost:10000 {
-    websocket
-    header_upstream -Origin
-  }
-}
-EOF
-
 cat <<-EOF > "/v2raybin/vmess.json"
 {
     "v": "2",
@@ -141,6 +115,4 @@ else
 fi
 
 cd "/v2raybin/v2ray-${v2ray_version}-linux-${System_bit}"
-./v2ray &
-cd "/caddybin"
-./caddy -conf="Caddyfile"
+./v2ray
